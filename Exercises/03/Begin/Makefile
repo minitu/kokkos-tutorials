@@ -1,5 +1,5 @@
 KOKKOS_PATH = ${HOME}/Kokkos/kokkos
-KOKKOS_DEVICES = "Cuda,OpenMP"
+KOKKOS_DEVICES = "Cuda"
 EXE_NAME = "03_Exercise"
 
 SRC = $(wildcard *.cpp)
@@ -11,12 +11,12 @@ default: build
 ifneq (,$(findstring Cuda,$(KOKKOS_DEVICES)))
 CXX = ${KOKKOS_PATH}/bin/nvcc_wrapper
 EXE = ${EXE_NAME}.cuda
-KOKKOS_ARCH = "Volta70"
+KOKKOS_ARCH = "Volta70,Power9"
 KOKKOS_CUDA_OPTIONS = "enable_lambda"
 else
-CXX = g++
+CXX = xlc++
 EXE = ${EXE_NAME}.host
-KOKKOS_ARCH = "BDW"
+KOKKOS_ARCH = "Power9"
 endif
 
 CXXFLAGS = -O3
