@@ -14,9 +14,9 @@ EXE = ${EXE_NAME}.cuda
 KOKKOS_ARCH = "Volta70"
 KOKKOS_CUDA_OPTIONS = "enable_lambda"
 else
-CXX = g++
+CXX = xlc++
 EXE = ${EXE_NAME}.host
-KOKKOS_ARCH = "BDW"
+KOKKOS_ARCH = "Power9"
 endif
 
 CXXFLAGS = -O3
