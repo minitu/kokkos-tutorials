@@ -1,23 +1,27 @@
 #include<Kokkos_Core.hpp>
 
 // EXERCISE: convert this loop into using ScatterView
-// #include<Kokkos_ScatterView.hpp>
+#include<Kokkos_ScatterView.hpp>
 
 // Scatter Add algorithm using atomics
 // EXERCISE: is atomic memory trait still needed?
 double scatter_view_loop(Kokkos::View<int**> v, 
-		 Kokkos::View<int*,Kokkos::MemoryTraits<Kokkos::Atomic>> r) {
+		 Kokkos::View<int*> r) {
   //EXERCISE: Create ScatterView before starting timer, assuming you could reuse it in real code
+  Kokkos::Experimental::ScatterView<int*> results(r);
   Kokkos::Timer timer;
   //EXERCISE: reset scatterview
+  results.reset();
   // Run Atomic Loop not r is already using atomics by default
   Kokkos::parallel_for("Atomic Loop", v.extent(0), 
     KOKKOS_LAMBDA(const int i) {
     //EXERCISE: get accessors
+    auto access = results.access();
     for(int j=0; j<v.extent(1); j++)
-      r(v(i,j))++;
+      access(v(i,j))+=1;
   });
   //EXERCISE: contribute back to original results view
+  Kokkos::Experimental::contribute(r, results);
   // Wait for Kernel to finish before timing
   Kokkos::fence();
   double time = timer.seconds();
